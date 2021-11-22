@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <b>Pilih Quarter</b>
+    <select name="quarter_key" id="el_quarter_key">
+      <option>--Pilih Quarter--</option>
+    </select>
+
+    <div id="placeholder"></div>
+
+    <script>
+      const keySelect = document.getElementById("el_quarter_key");
+      const placeholder = document.getElementById("placeholder");
+
+      fetch("/keys").then(async (res) => {
+        k = await res.json();
+        console.log(k);
+
+        for (let key of k) {
+          var option = document.createElement("option");
+          option.text = key;
+          keySelect.add(option);
+        }
+      });
+
+      keySelect.addEventListener("change", async (ev) => {
+        const selected = keySelect.value;
+
+        const data = await fetch(`/byquarter/${selected}`);
+        placeholder.innerHTML = await data.text();
+        //   console.log(data);
+      });
+    </script>
+  </body>
+</html>
