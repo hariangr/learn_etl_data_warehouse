@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>{{quarter}}</h1>
+
+    {% for q in keys%}
+    <a href="/quarterly/{{q}}">{{q}}</a>
+    {% endfor %}
+
+    <img
+      style="width: 100vw; height: 50vh; object-fit: contain"
+      src="data:image/png;base64,{{graph_amount_trans}}"
+    />
+    <img
+      style="width: 100vw; height: 50vh; object-fit: contain"
+      src="data:image/png;base64,{{graph_per_mode}}"
+    />
+    <img
+      style="width: 100vw; height: 50vh; object-fit: contain"
+      src="data:image/png;base64,{{from_geo}}"
+    />
+    <img
+      style="width: 100vw; height: 50vh; object-fit: contain"
+      src="data:image/png;base64,{{to_geo}}"
+    />
+
+    <div>{{ table_trans | safe}}</div>
+  </body>
+</html>
