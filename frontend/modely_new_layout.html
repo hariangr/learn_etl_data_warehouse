@@ -16,7 +16,7 @@
     .w3-row-padding img {margin-bottom: 12px}
     </style>
 
-    <title>Quarterly Ojek Online</title>
+    <title>Modely Ojek Online</title>
   </head>
 
   <body>
@@ -70,16 +70,7 @@
       <div class="w3-card w3-center">
         <img src="data:image/png;base64,{{graph_amount_trans}}" style="width:95%">
         <div class="w3-container w3-center">
-          <h5>Amount Transaction Delivery IDR Quarterly</h5>
-        </div>
-      </div>
-    </div>
-  
-    <div class="w3-third">
-      <div class="w3-card w3-center">
-        <img src="data:image/png;base64,{{graph_per_mode}}" style="width:95%">
-        <div class="w3-container w3-center">
-          <h5>Amount Per Mode Quarterly</h5>
+          <h5>Amount Transaction Delivery IDR Modely</h5>
         </div>
       </div>
     </div>
@@ -88,26 +79,28 @@
       <div class="w3-card w3-center">
         <img src="data:image/png;base64,{{graph_per_distance_rounded}}" style="width:95%">
         <div class="w3-container w3-center">
-          <h5>Distance Quarterly</h5>
+          <h5>Distance Modely</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="w3-row-padding" style="width:100%">
+
+    <div class="w3-third">
+      <div class="w3-card w3-center">
+        <img src="data:image/png;base64,{{graph_start_hour}}" style="width:95%">
+        <div class="w3-container w3-center">
+          <h5>Jam Berangkat Modely</h5>
         </div>
       </div>
     </div>
 
-    <div class="w3-row-padding" style="width:100%">
       <div class="w3-third ">
         <div class="w3-card w3-center w3-margin-top">
-          <img src="data:image/png;base64,{{from_geo}}" style="width:100%">
+          <img src="data:image/png;base64,{{graph_end_hour}}" style="width:100%">
           <div class="w3-container w3-center">
-            <h5>Sebaran Lokasi Start Quarterly  </h5>
-          </div>
-        </div>
-      </div>
-    
-      <div class="w3-third">
-        <div class="w3-card w3-margin-top w3-margin-bottom w3-center">
-          <img  src="data:image/png;base64,{{to_geo}}" style="width:100%">
-          <div class="w3-container w3-center">
-            <h5>Sebaran Lokasi Finish Quarterly</h5>
+            <h5>Jam Sampai Modely</h5>
           </div>
         </div>
       </div>
@@ -116,10 +109,30 @@
       <div class="w3-card w3-center">
         <img src="data:image/png;base64,{{graph_duration}}" style="width:95%">
         <div class="w3-container w3-center">
-          <h5>Duration Minute</h5>
+          <h5>Duration Minute Modely</h5>
         </div>
       </div>
     </div>
+    </div>
+
+      <div class="w3-third ">
+        <div class="w3-card w3-center w3-margin-top">
+          <img src="data:image/png;base64,{{from_geo}}" style="width:100%">
+          <div class="w3-container w3-center">
+            <h5>Sebaran Lokasi Start Modely </h5>
+          </div>
+        </div>
+      </div>
+    
+      <div class="w3-third">
+        <div class="w3-card w3-margin-top w3-margin-bottom w3-center">
+          <img  src="data:image/png;base64,{{to_geo}}" style="width:100%">
+          <div class="w3-container w3-center">
+            <h5>Sebaran Lokasi Finish Modely</h5>
+          </div>
+        </div>
+      </div>
+
 
   <div>
     <!-- <table class=" w3-responsive w3-table-all  w3-margin-top w3-card-4" style="width:70%">

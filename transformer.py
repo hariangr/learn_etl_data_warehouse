@@ -10,7 +10,9 @@ def remove_after_dot(s):
     # Dimensi Merchant
     return s.split('.')[0]
 
-
+def second_to_minute(cell):
+    return cell / 60
+    
 def split_date_process_start(row):
     # Transform date_process menjadi date_start dan date_end dari str
     s = row['date_process']

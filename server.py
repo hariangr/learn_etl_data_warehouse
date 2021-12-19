@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from transformer import get_lat, get_rounded_dist, get_lng, remove_after_dot, scientific_notation_9_kelurahan_id_to_int, split_date_process_end, split_date_process_start
+from transformer import get_lat, get_rounded_dist, get_lng, remove_after_dot, scientific_notation_9_kelurahan_id_to_int, second_to_minute, split_date_process_end, split_date_process_start
 
 base_oltp = "./assets/oltp"
 
@@ -77,6 +77,11 @@ fact_transaction['transaction_to_lng'] = fact_transaction['transaction_to_latlng
 # Transform distance float ke rounded discrete
 fact_transaction['distance_rounded'] = fact_transaction['distance'].apply(get_rounded_dist)
 
+# Tambahkan durasi
+fact_transaction['duration'] = fact_transaction['date_end'] - fact_transaction['date_start']
+fact_transaction['duration'] = fact_transaction['duration'].dt.total_seconds()
+fact_transaction['duration'] = fact_transaction['duration'].apply(second_to_minute).astype(int)
+
 # Banyak ada yang formatnya tidak bener misal transaction_from_latlng "-0.03844709999999999,109.3272303 \t\t\t\t\t\t\..."
 fact_transaction.loc[fact_transaction['transaction_from_latlng'].str.contains(
     "\t")]
@@ -85,12 +90,19 @@ fact_transaction = fact_transaction.drop('date_process', axis=1)
 fact_transaction = fact_transaction.drop('transaction_from_latlng', axis=1)
 fact_transaction = fact_transaction.drop('transaction_to_latlng', axis=1)
 
+# Berdasarkan Quarter
 sort_quarterly = fact_transaction.groupby(
     fact_transaction['date_start'].dt.to_period('Q'))
 simplify = {}
 for key, it in sort_quarterly:
     simplify[str(key)] = it
 
+# Berdasarkan Mode
+sort_mode = fact_transaction.groupby(
+    fact_transaction['mode'])
+simplify_mode = {}
+for key, it in sort_mode:
+    simplify_mode[str(key)] = it
 
 template_dir = os.path.abspath(os.path.dirname(__file__))
 template_dir = os.path.join(template_dir, 'frontend')
@@ -103,15 +115,17 @@ def index():
     return flask.render_template('index.html', keys=keys)
 
 
+
+# Untuk rendering
+import base64
+import matplotlib
+import plotly.express as px
+from io import BytesIO
+from IPython.display import display, HTML
+matplotlib.use('Agg')
+
 @app.route('/quarterly/<q>')
 def byquarter(q):
-    import base64
-    import matplotlib
-    import plotly.express as px
-    from io import BytesIO
-    from IPython.display import display, HTML
-    matplotlib.use('Agg')
-
     # Amount Transaction Delivery
     plt.figure(figsize=(10, 8))
     plt.title("Amount Transaction Delivery IDR")
@@ -133,11 +147,18 @@ def byquarter(q):
     # Distance Histogram Rounded
     plt.figure(figsize=(10, 8))
     plt.title("Distance")
-    # plt.xticks(rotation=90)
     plt.hist(simplify[q]['distance_rounded'].to_list())
     tmpfile = BytesIO()
     plt.savefig(tmpfile, format='png')
     graph_per_distance_rounded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Duration
+    plt.figure(figsize=(10, 8))
+    plt.title("Duration Minute")
+    plt.hist(simplify[q]['duration'].to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_duration = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
 
     # From Geo
     fig = px.scatter_geo(simplify[q], lat='transaction_from_lat', lon='transaction_from_lng',
@@ -169,9 +190,87 @@ def byquarter(q):
     # # Quarter Select
     keys = list(simplify.keys())
     # Mode Select
-    modes = dim_kategori['category_name'].to_list()
+    modes = list(simplify_mode.keys())
 
-    return flask.render_template('quarterly_new_layout.html', keys=keys, modes=modes, graph_per_distance_rounded=graph_per_distance_rounded, to_geo=to_geo, table_trans=table_trans, from_geo=from_geo, graph_amount_trans=graph_amount_trans, quarter=q, graph_per_mode=graph_per_mode)
+    return flask.render_template('quarterly_new_layout.html', q=q, keys=keys, modes=modes, graph_duration=graph_duration, graph_per_distance_rounded=graph_per_distance_rounded, to_geo=to_geo, table_trans=table_trans, from_geo=from_geo, graph_amount_trans=graph_amount_trans, quarter=q, graph_per_mode=graph_per_mode)
 
+
+@app.route('/mode/<q>')
+def bymode(q):
+    # Amount Transaction Delivery
+    plt.figure(figsize=(10, 8))
+    plt.title("Amount Transaction Delivery IDR")
+    plt.xticks(rotation=90)
+    plt.hist(simplify_mode[q]['amount_delivery'].to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_amount_trans = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Distance Histogram Rounded
+    plt.figure(figsize=(10, 8))
+    plt.title("Distance")
+    plt.hist(simplify_mode[q]['distance_rounded'].to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_per_distance_rounded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Duration
+    plt.figure(figsize=(10, 8))
+    plt.title("Duration Minute")
+    plt.hist(simplify_mode[q]['duration'].to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_duration = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Jam Start
+    plt.figure(figsize=(10, 8))
+    plt.title("Start Hour")
+    plt.hist(simplify_mode[q]['date_start'].dt.hour.to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_start_hour = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Jam Sampai
+    plt.figure(figsize=(10, 8))
+    plt.title("End Hour")
+    plt.hist(simplify_mode[q]['date_end'].dt.hour.to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_end_hour = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+
+    # From Geo
+    fig = px.scatter_geo(simplify_mode[q], lat='transaction_from_lat', lon='transaction_from_lng',
+                         hover_name="from_alamat")
+    fig.update_layout(title='Sebaran Lokasi Start', title_x=0.5, geo=dict(
+        projection_scale=7.5,  # this is kind of like zoom
+        # this will center on the point
+        center=dict(lat=-2.462587, lon=117.492602),
+    ))
+    tmpfile = BytesIO()
+    fig.write_image(tmpfile, format='png')
+    from_geo = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # GOAL Geo
+    fig = px.scatter_geo(simplify_mode[q], lat='transaction_to_lat', lon='transaction_to_lng',
+                         hover_name="from_alamat")
+    fig.update_layout(title='Sebaran Lokasi Finish', title_x=0.5, geo=dict(
+        projection_scale=7.5,  # this is kind of like zoom
+        # this will center on the point
+        center=dict(lat=-2.462587, lon=117.492602),
+    ))
+    tmpfile = BytesIO()
+    fig.write_image(tmpfile, format='png')
+    to_geo = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+
+    # Table transaksi
+    table_trans = simplify_mode[q].to_html()
+
+    # # Quarter Select
+    keys = list(simplify.keys())
+    # Mode Select
+    modes = list(simplify_mode.keys())
+
+    return flask.render_template('modely_new_layout.html', q=q, keys=keys, modes=modes,graph_end_hour=graph_end_hour, graph_start_hour=graph_start_hour, graph_duration=graph_duration, graph_per_distance_rounded=graph_per_distance_rounded, to_geo=to_geo, table_trans=table_trans, from_geo=from_geo, graph_amount_trans=graph_amount_trans, quarter=q)
 
 app.run(debug=True, port=3333)
