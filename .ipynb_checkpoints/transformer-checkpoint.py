@@ -17,9 +17,7 @@ def split_date_process_start(row):
     splitted = s.split(" s/d ")
     return splitted[0]
 
-def get_rounded_dist(cell):
-    s = int(float(cell))
-    return s
+
 
 def split_date_process_end(row):
     # Transform date_process menjadi date_start dan date_end dari str

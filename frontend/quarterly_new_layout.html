@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body,h1 {font-family: "Raleway", Arial, sans-serif}
+    h1 {letter-spacing: 6px}
+    .w3-row-padding img {margin-bottom: 12px}
+    </style>
+
+    <title>Quarterly Ojek Online</title>
+  </head>
+
+  <body>
+  
+  <!-- !PAGE CONTENT! -->
+  <div class="w3-content" style="max-width:1500px">
+  
+  <!-- Header -->
+  <header class="w3-panel w3-center w3-opacity w3-light-grey" style="padding:128px 16px">
+    <h1 class="w3-xlarge">DATAWAREHOUSE</h1>
+    <h4>1905551023 - 1905551054</h4>
+    
+    <div class="w3-padding-32">
+      <div class="w3-padding-16">
+        <h3>Quarterly</h3>
+        {% for q in keys%}
+        <a href="/quarterly/{{q}}" class="w3-bar-item w3-button w3-green w3-text-white">{{q}}</a>
+        {% endfor %}
+      </div>
+      
+      <div class="w3-padding-16">
+        <h3>Modes</h3>
+        {% for q in modes%}
+        <a href="/mode/{{q}}" class="w3-bar-item w3-button w3-green w3-text-white">{{q}}</a>
+        {% endfor %}
+      </div>
+      
+    </div>
+  </header>
+
+  <!-- <div class="w3-row-padding">
+    <div class="w3-card" style="width:150%">
+      <img src="amount_transaction_delivery.jpg" style="width:100%">
+      <div class="w3-container">
+        <h4>Amount Transaction Delivery</h4>
+      </div>
+    </div>
+  </div>
+  <div class="w3-third">
+    <div class="w3-card" style="width:150%">
+      <img src="amount_per_mode.jpg" style="width:100%">
+      <div class="w3-container">
+        <h4>Amount Transaction Delivery</h4>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="w3-row-padding "style="width:100%">
+    <div class="w3-third">
+      <div class="w3-card w3-center">
+        <img src="data:image/png;base64,{{graph_amount_trans}}" style="width:95%">
+        <div class="w3-container w3-center">
+          <h5>Amount Transaction Delivery IDR Quarterly</h5>
+        </div>
+      </div>
+    </div>
+  
+    <div class="w3-third">
+      <div class="w3-card w3-center">
+        <img src="data:image/png;base64,{{graph_per_mode}}" style="width:95%">
+        <div class="w3-container w3-center">
+          <h5>Amount Per Mode Quarterly</h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-third">
+      <div class="w3-card w3-center">
+        <img src="data:image/png;base64,{{graph_per_distance_rounded}}" style="width:95%">
+        <div class="w3-container w3-center">
+          <h5>Distance Quarterly</h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-row-padding" style="width:100%">
+      <div class="w3-third ">
+        <div class="w3-card w3-center w3-margin-top">
+          <img src="data:image/png;base64,{{from_geo}}" style="width:100%">
+          <div class="w3-container w3-center">
+            <h5>Sebaran Lokasi Start Quarterly  </h5>
+          </div>
+        </div>
+      </div>
+    
+      <div class="w3-third">
+        <div class="w3-card w3-margin-top w3-margin-bottom w3-center">
+          <img  src="data:image/png;base64,{{to_geo}}" style="width:100%">
+          <div class="w3-container w3-center">
+            <h5>Sebaran Lokasi Finish Quarterly</h5>
+          </div>
+        </div>
+      </div>
+
+  <div>
+    <!-- <table class=" w3-responsive w3-table-all  w3-margin-top w3-card-4" style="width:70%">
+      <tr class="w3-green">
+          <th>Id</th>
+          <th>mode</th>
+          <th>from_alamat</th>
+          <th>from_kelurahanid</th>
+          <th>to_alamat</th>
+          <th>to_kelurahanid</th>
+          <th>distance</th>
+          <th>amount_delivery</th>
+          <th>amount_merchant</th>
+          <th>transaction_amount_total</th>
+          <th>customer_id</th>
+          <th>driver_id</th>
+          <th>merchant_id</th>
+          
+
+      </tr>
+      <tr>
+          <td>1617.0</td>
+          <td>BIKE</td>
+          <td>Gang Ikhwan No.16, Sungai Jawi</td>
+          <td>6171031002</td>
+          <td>Jl. Prof M. Yamin No.3a, Sungai Bangkong</td>
+          <td>6171010002</td>
+          <td>5.55</td>
+          <td>2500.0</td>
+          <td>0.0</td>
+          <td>2500.0</td>
+          <td>67.0</td>
+          <td>103.0</td>
+          <td>423.0</td>
+      </tr>
+      <tr>
+          <td>1297.0</td>
+          <td>FOOD</td>
+          <td>Neo Shabu-Shabu Steak & Shake, Johar, Jl. Johar No.90e</td>
+          <td>6171031001</td>
+          <td>Jl. Dare Nandong Villa Ria Indah,  Tj. Hulu</td>
+          <td>6171020002</td>
+          <td>7.08</td>
+          <td>9000.0</td>
+          <td>82.000</td>
+          <td>91000.0</td>
+          <td>55.0</td>
+          <td>86.0</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>1394.0</td>
+          <td>SHOP</td>
+          <td>Alfamart Pontianak Mall, Jl Teuku Umar</td>
+          <td>6171031002</td>
+          <td>Gg. Gn. Malabar No.21,  Sungai Jawi</td>
+          <td>6171030008</td>
+          <td>4.02</td>
+          <td>5000.0</td>
+          <td>58500.0</td>
+          <td>63500.0</td>
+          <td>68.0</td>
+          <td>82.0</td>
+          <td>54.0</td>
+      </tr>
+    </table> -->
+
+
+    <div class=" w3-responsive w3-table-all">{{ table_trans | safe}}</div>
+  </div>
+    
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>

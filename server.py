@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from transformer import get_lat, get_lng, remove_after_dot, scientific_notation_9_kelurahan_id_to_int, split_date_process_end, split_date_process_start
+from transformer import get_lat, get_rounded_dist, get_lng, remove_after_dot, scientific_notation_9_kelurahan_id_to_int, split_date_process_end, split_date_process_start
 
 base_oltp = "./assets/oltp"
 
@@ -74,6 +74,9 @@ fact_transaction['transaction_to_lat'] = fact_transaction['transaction_to_latlng
 fact_transaction['transaction_to_lng'] = fact_transaction['transaction_to_latlng'].apply(
     get_lng).astype(float)
 
+# Transform distance float ke rounded discrete
+fact_transaction['distance_rounded'] = fact_transaction['distance'].apply(get_rounded_dist)
+
 # Banyak ada yang formatnya tidak bener misal transaction_from_latlng "-0.03844709999999999,109.3272303 \t\t\t\t\t\t\..."
 fact_transaction.loc[fact_transaction['transaction_from_latlng'].str.contains(
     "\t")]
@@ -126,6 +129,15 @@ def byquarter(q):
     tmpfile = BytesIO()
     plt.savefig(tmpfile, format='png')
     graph_per_mode = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    
+    # Distance Histogram Rounded
+    plt.figure(figsize=(10, 8))
+    plt.title("Distance")
+    # plt.xticks(rotation=90)
+    plt.hist(simplify[q]['distance_rounded'].to_list())
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    graph_per_distance_rounded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
 
     # From Geo
     fig = px.scatter_geo(simplify[q], lat='transaction_from_lat', lon='transaction_from_lng',
@@ -156,8 +168,10 @@ def byquarter(q):
 
     # # Quarter Select
     keys = list(simplify.keys())
+    # Mode Select
+    modes = dim_kategori['category_name'].to_list()
 
-    return flask.render_template('quarterly.html', keys=keys, to_geo=to_geo, table_trans=table_trans, from_geo=from_geo, graph_amount_trans=graph_amount_trans, quarter=q, graph_per_mode=graph_per_mode)
+    return flask.render_template('quarterly_new_layout.html', keys=keys, modes=modes, graph_per_distance_rounded=graph_per_distance_rounded, to_geo=to_geo, table_trans=table_trans, from_geo=from_geo, graph_amount_trans=graph_amount_trans, quarter=q, graph_per_mode=graph_per_mode)
 
 
 app.run(debug=True, port=3333)
