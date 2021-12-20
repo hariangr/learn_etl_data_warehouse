@@ -14,6 +14,13 @@ from transformer import get_lat, get_rounded_dist, get_lng, remove_after_dot, sc
 
 base_oltp = "./assets/oltp"
 
+# Load
+base_output = "./output"
+from sqlalchemy import create_engine
+import os
+cwd = os.getcwd()
+print(cwd)
+engine = create_engine(f"sqlite:///{cwd}/output.db", echo=True)
 
 # ### Dimensi Kategori
 dim_kategori = pd.read_excel(
@@ -103,6 +110,24 @@ sort_mode = fact_transaction.groupby(
 simplify_mode = {}
 for key, it in sort_mode:
     simplify_mode[str(key)] = it
+
+# Cache
+dim_kategori.to_sql('dim_kategori', con=engine, if_exists='replace',
+           index_label='id')
+dim_driver.to_sql('dim_driver', con=engine, if_exists='replace',
+           index_label='id')
+dim_kelurahan.to_sql('dim_kelurahan', con=engine, if_exists='replace',
+           index_label='id')
+dim_merchant.to_sql('dim_merchant', con=engine, if_exists='replace',
+           index_label='id')
+dim_user.to_sql('dim_user', con=engine, if_exists='replace',
+           index_label='id')
+for quarterly in simplify:
+    simplify[quarterly].to_sql(f"QUART_{quarterly}", con=engine, if_exists='replace',
+            index_label='id')
+for modely in simplify_mode:
+    simplify_mode[modely].to_sql(f"MODE_{modely}", con=engine, if_exists='replace',
+            index_label='id')
 
 template_dir = os.path.abspath(os.path.dirname(__file__))
 template_dir = os.path.join(template_dir, 'frontend')
